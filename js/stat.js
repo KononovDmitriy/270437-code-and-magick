@@ -1,86 +1,147 @@
 'use strict';
 
 window.renderStatistics = function(ctx, names, times) {
-  var Parameters = {};
-  Parameters.frameStartX = 100; //Координата X облака
-  Parameters.frameStartY = 10; //Координата X облака
-  Parameters.frameWidth = 420; //Ширина облака
-  Parameters.frameHeight = 270; //Высота облака
-  Parameters.frameShadowOffset = 10; //Смещение тени облака по X и Y
-  Parameters.fontSize  = 16; //Размер шрифта
-  Parameters.padding = 20; //Отступы для текста
-  Parameters.gistWidth = 40; //Ширина столбца гистограммы
-  Parameters.gistHeight = 150; //Высота столбца гистограммы
-  Parameters.gistInt = 50; //Расстояние между столбцами
-  Parameters.name = ''; //Имя игрока
-  Parameters.time = 0; //Время игрока
-  Parameters.maxTime = 0; //максимальное время
-  Parameters.player = true; //флаг текущего игрока
-  Parameters.currentPosition = 0; //для определения координат столбцов гистограммы
-
-  // Рисуем тень от облака
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-  ctx.fillRect(Parameters.frameStartX + Parameters.frameShadowOffset, Parameters.frameStartY + Parameters.frameShadowOffset, Parameters.frameWidth, Parameters.frameHeight);
-  // Рисуем облако
-  ctx.fillStyle = 'white';
-  ctx.fillRect(Parameters.frameStartX, Parameters.frameStartY, Parameters.frameWidth, Parameters.frameHeight);
-  // Пишем приветствие
-  ctx.fillStyle = 'black';
-  ctx.font = '16px PT Mono';
-  ctx.fillText('Ура вы победили!', Parameters.frameStartX + Parameters.padding, Parameters.frameStartY + Parameters.fontSize + Parameters.padding);
-  ctx.fillText('Список результатов:', Parameters.frameStartX + Parameters.padding, Parameters.frameStartY + (Parameters.fontSize * 2) + Parameters.padding);
-  // Ищем максимальное время
-  var currTime = 0;
-  for (var i = 0; i < times.length; i++) {
-    currTime = Math.round(times[i]);
-    if (currTime > Parameters.maxTime) {
-      Parameters.maxTime = currTime;
-    }
+  /**
+  * Enum для размеров.
+  * @readonly
+  * @enum {number}
+  */
+  var sizes = {
+    CLOUDWIDTH: 420,
+    CLOUDHEIGHT: 270,
+    FONT: 16,
+    PADDING: 20,
+    COLUMNWIDTH: 40,
+    COLUMNHEIGHT: 150,
+    COLUMNINTERVAL: 50
   }
-  // Выводим результаты (результат игрока - первый)
-  var positionNum = 1 // позиция остальных результатов
+
+  /**
+  * Enum для позиции.
+  * @readonly
+  * @enum {number}
+  */
+  var positions = {
+    CLOUDSTARTX : 100,
+    CLOUDSTARTY : 10,
+    CLOUDSHADOWOFFSET : 10
+  }
+
+  /**
+  * Enum для имени.
+  * @readonly
+  * @enum {string}
+  */
+  var namesPlayers = {
+    PLAYER: 'Вы'    
+  }
+
+  /**
+  * Enum для цветов.
+  * @readonly
+  * @enum {string}
+  */
+  var colors = {
+    CLOUD: 'white',
+    CLOUDSHADOW: 'rgba(0, 0, 0, 0.7)',
+    TEXT: 'black',
+    COLUMNPLAYER: 'rgba(255, 0, 0, 1)',
+    COLUMNOTHER: 'rgba(0, 0, 255, opacity)'
+  }
+
+  /**
+  * Enum шрифта.
+  * @readonly
+  * @enum {string}
+  */  
+  var fonts = {
+    TEXT: '16px PT Mono'
+  }
+
+  /**
+  * Enum сообщений.
+  * @readonly
+  * @enum {string}
+  */  
+  var messages = {
+    VICTORY: 'Ура вы победили!',
+    RESULTS: 'Список результатов:'
+  }  
+
+  drawCloudShadow(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT, positions.CLOUDSHADOWOFFSET, colors.CLOUDSHADOW, ctx);
+  drawCloud(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT, colors.CLOUD, ctx);  
+  writeGreeteng(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.FONT, sizes.PADDING, colors.TEXT, fonts.TEXT, messages.VICTORY, messages.RESULTS, ctx);  
+  drawResults(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDHEIGHT, sizes.COLUMNWIDTH, sizes.COLUMNHEIGHT, sizes.COLUMNINTERVAL, sizes.PADDING, sizes.FONT, fonts.TEXTSIZE, colors.COLUMNPLAYER, colors.COLUMNOTHER,  colors.TEXT, times, names, namesPlayers.PLAYER, ctx);
+}
+
+var drawCloudShadow = function(cloudStartX, cloudStartY, cloudWidth, cloudHeight, cloudShadowOffset, color, ctx) {
+  ctx.fillStyle = color;
+  ctx.fillRect(cloudStartX + cloudShadowOffset, cloudStartY + cloudShadowOffset, cloudWidth, cloudHeight);
+}
+
+var drawCloud = function(cloudStartX, cloudStartY, cloudWidth, cloudHeight, color, ctx) {
+  ctx.fillStyle = color;
+  ctx.fillRect(cloudStartX, cloudStartY, cloudWidth, cloudHeight);
+}
+
+var writeGreeteng = function(cloudStartX, cloudStartY, fontSize, padding, textColor, font, messageVictory, messageResults, ctx) {
+  ctx.fillStyle = textColor;
+  ctx.font = font;
+  ctx.fillText(messageVictory, cloudStartX + padding, cloudStartY + fontSize + padding);
+  ctx.fillText(messageResults, cloudStartX + padding, cloudStartY + (fontSize * 2) + padding);
+}
+
+var drawResults = function(cloudStartX, cloudStartY, cloudHeight, columnWidth, columnHeight, columnInterval, padding, fontSize, textSize, columnPlayerColor, columnOtherColor, textColor, times, names, namePlayer, ctx) {
+  var maxTime = getMaxTime(times);
+  var positionNum = 1
+  var name, time, player, currentPosition;
   for (var i = 0; i < names.length; i++) {
-    Parameters.name = names[i];
-    Parameters.time = Math.round(times[i]);
-    // Если игорок
-    if (Parameters.name === 'Вы') {
-      Parameters.player = true;
-      Parameters.currentPosition = Parameters.frameStartX + Parameters.gistInt;
-      DrawColumn(Parameters, ctx);
+    name = names[i];
+    time = Math.round(times[i]);
+    if (name === namePlayer) {
+      player = true;
+      currentPosition = cloudStartX + columnInterval;
+      drawColumn(cloudStartY, cloudHeight, currentPosition, columnHeight, columnWidth, columnPlayerColor, columnOtherColor, padding, fontSize, textSize, textColor, name, time, maxTime, player, ctx);
     } else {
-      // Если остальные
-      Parameters.player = false;
-      Parameters.currentPosition = ((Parameters.gistWidth + Parameters.gistInt) * positionNum) + Parameters.gistInt + Parameters.frameStartX;
-      DrawColumn(Parameters, ctx);
+      player = false;
+      currentPosition = ((columnWidth + columnInterval) * positionNum) + columnInterval + cloudStartX;
+      drawColumn(cloudStartY, cloudHeight, currentPosition, columnHeight, columnWidth, columnPlayerColor, columnOtherColor, padding, fontSize, textSize, textColor, name, time, maxTime, player, ctx);
       positionNum ++;
     }
   }
 }
 
-var DrawColumn = function(Parameters, ctx) {
-  // цвет столбца
-  var color;
-  // высота столбца
-  var gistCurrentHeight = (Parameters.gistHeight * Parameters.time) / Parameters.maxTime;
-  // Координата столбца по Y
-  var gistColumnStartY = Parameters.frameStartY + Parameters.frameHeight - Parameters.padding - Parameters.fontSize - Parameters.gistHeight + (Parameters.gistHeight - gistCurrentHeight);
-  // Цвет столбца
-  if (Parameters.player) {
-    color = 'rgba(255, 0, 0, 1)';
-  } else {
-    color = 'rgba(0, 0, 255, ' + getRnd(0.3, 1) + ')';
+var getMaxTime = function(times) {
+  var currentTime = 0;
+  var maxTime = 0;
+  for (var i = 0; i < times.length; i++) {
+    currentTime = Math.round(times[i]);
+    if (currentTime > maxTime) {
+      maxTime = currentTime;
+    }
   }
-  // выводим имя игрока
-  ctx.fillStyle = 'black';
-  ctx.font = '16px PT Mono';
-  ctx.fillText(Parameters.name, Parameters.currentPosition, Parameters.frameStartY + Parameters.frameHeight - Parameters.padding);
-  // выводим результат
-  ctx.fillText(Parameters.time, Parameters.currentPosition, gistColumnStartY - Parameters.padding / 2);
-  // Рисуем гистограмму
-  ctx.fillStyle = color;
-  ctx.fillRect(Parameters.currentPosition, gistColumnStartY, Parameters.gistWidth, gistCurrentHeight);
+  return maxTime;
+} 
+
+var drawColumn = function(cloudStartY, cloudHeight, currentPosition, columnHeight, columnWidth, colorColumnPlayer, colorColumnOther, padding, fontSize, textSize, colorText, name, time, maxTime, player, ctx) {
+  var columnCurrentHeight = (columnHeight * time) / maxTime;
+  var columnStartY = cloudStartY + cloudHeight - padding - fontSize - columnHeight + (columnHeight - columnCurrentHeight);
+  writePlayerName(cloudStartY, cloudHeight, columnStartY, currentPosition, colorText, textSize, padding, name, time, ctx);
+  DrawHistogram(currentPosition, columnStartY, columnWidth, columnCurrentHeight, player, colorColumnPlayer, colorColumnOther, ctx);
 }
 
-var getRnd = function(min, max) {
+var writePlayerName = function(cloudStartY, cloudHeight, columnStartY, currentPosition, colorText, textSize, padding, name, time, ctx) {
+  ctx.fillStyle = colorText;
+  ctx.font = textSize;
+  ctx.fillText(name, currentPosition, cloudStartY + cloudHeight - padding);
+  ctx.fillText(time, currentPosition, columnStartY - padding / 2);
+}
+
+var DrawHistogram = function(currentPosition, columnStartY, columnWidth, columnCurrentHeight, player, colorColumnPlayer, colorColumnOther, ctx) {
+  ctx.fillStyle = player ? colorColumnPlayer : colorColumnOther.replace('opacity', getRandom(0.3, 1));
+  ctx.fillRect(currentPosition, columnStartY, columnWidth, columnCurrentHeight);
+}
+
+var getRandom = function(min, max) {
   return Math.random() * (max - min) + min;
 }
