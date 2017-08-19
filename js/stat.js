@@ -94,7 +94,10 @@ var writeGreeteng = function (cloudStartX, cloudStartY, fontSize, padding, textC
 var drawResults = function (cloudStartX, cloudStartY, cloudHeight, columnWidth, columnHeight, columnInterval, padding, fontSize, textSize, columnPlayerColor, columnOtherColor, textColor, times, names, namePlayer, ctx) {
   var maxTime = getMaxTime(times);
   var positionNum = 1;
-  var name, time, player, currentPosition;
+  var name;
+  var time;
+  var player;
+  var currentPosition;
   for (var i = 0; i < names.length; i++) {
     name = names[i];
     time = Math.round(times[i]);
