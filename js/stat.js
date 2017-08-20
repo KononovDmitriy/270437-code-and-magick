@@ -1,27 +1,27 @@
 'use strict';
 
-  var sizes = {
-    CLOUDWIDTH: 420,
-    CLOUDHEIGHT: 270,
-    FONT: 16,
-    PADDING: 20,
-    COLUMNWIDTH: 40,
-  };
+var sizes = {
+  CLOUDWIDTH: 420,
+  CLOUDHEIGHT: 270,
+  FONT: 16,
+  PADDING: 20,
+  COLUMNWIDTH: 40,
+};
 
-  var positions = {
-    CLOUDSTARTX: 100,
-    CLOUDSTARTY: 10,
-  };
-  
-  var colors = {
-    CLOUD: 'white',
-    CLOUDSHADOW: 'rgba(0, 0, 0, 0.7)',
-    TEXT: 'black',
-  };
+var positions = {
+  CLOUDSTARTX: 100,
+  CLOUDSTARTY: 10,
+};
 
-  var fonts = {
-    TEXT: '16px PT Mono'
-  };
+var colors = {
+  CLOUD: 'white',
+  CLOUDSHADOW: 'rgba(0, 0, 0, 0.7)',
+  TEXT: 'black',
+};
+
+var fonts = {
+  TEXT: '16px PT Mono'
+};
 
 window.renderStatistics = function (ctx, names, times) {
   drawCloudShadow(ctx);
@@ -39,8 +39,8 @@ var drawCloudShadow = function (ctx) {
 
 var drawCloud = function (ctx) {
   ctx.fillStyle = colors.CLOUD;
-  ctx.fillRect(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH, 
-    sizes.CLOUDHEIGHT);
+  ctx.fillRect(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH,
+      sizes.CLOUDHEIGHT);
 };
 
 var writeGreeteng = function (ctx) {
@@ -48,10 +48,10 @@ var writeGreeteng = function (ctx) {
   var RESULTS = 'Список результатов:';
   ctx.fillStyle = colors.TEXT;
   ctx.font = fonts.TEXT;
-  ctx.fillText(VICTORY, positions.CLOUDSTARTX + sizes.PADDING, 
-    positions.CLOUDSTARTY + sizes.FONT + sizes.PADDING);
-  ctx.fillText(RESULTS, positions.CLOUDSTARTX + sizes.PADDING, 
-    positions.CLOUDSTARTY + (sizes.FONT * 2) + sizes.PADDING);
+  ctx.fillText(VICTORY, positions.CLOUDSTARTX + sizes.PADDING,
+      positions.CLOUDSTARTY + sizes.FONT + sizes.PADDING);
+  ctx.fillText(RESULTS, positions.CLOUDSTARTX + sizes.PADDING,
+      positions.CLOUDSTARTY + (sizes.FONT * 2) + sizes.PADDING);
 };
 
 var drawResults = function (times, names, ctx) {
