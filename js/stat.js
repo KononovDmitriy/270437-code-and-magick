@@ -1,21 +1,21 @@
 'use strict';
 
 var sizes = {
-  CLOUDWIDTH: 420,
-  CLOUDHEIGHT: 270,
+  CLOUD_WIDTH: 420,
+  CLOUD_HEIGHT: 270,
   FONT: 16,
   PADDING: 20,
-  COLUMNWIDTH: 40,
+  COLUMN_WIDTH: 40,
 };
 
 var positions = {
-  CLOUDSTARTX: 100,
-  CLOUDSTARTY: 10,
+  CLOUD_START_X: 100,
+  CLOUD_START_Y: 10,
 };
 
 var colors = {
   CLOUD: 'white',
-  CLOUDSHADOW: 'rgba(0, 0, 0, 0.7)',
+  CLOUD_SHADOW: 'rgba(0, 0, 0, 0.7)',
   TEXT: 'black',
 };
 
@@ -31,16 +31,16 @@ window.renderStatistics = function (ctx, names, times) {
 };
 
 var drawCloudShadow = function (ctx) {
-  var CLOUDSHADOWOFFSET = 10;
-  ctx.fillStyle = colors.CLOUDSHADOW;
-  ctx.fillRect(positions.CLOUDSTARTX + CLOUDSHADOWOFFSET, positions.CLOUDSTARTY
-   + CLOUDSHADOWOFFSET, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT);
+  var CLOUD_SHADOW_OFFSET = 10;
+  ctx.fillStyle = colors.CLOUD_SHADOW;
+  ctx.fillRect(positions.CLOUD_START_X + CLOUD_SHADOW_OFFSET, positions.CLOUD_START_Y
+   + CLOUD_SHADOW_OFFSET, sizes.CLOUD_WIDTH, sizes.CLOUD_HEIGHT);
 };
 
 var drawCloud = function (ctx) {
   ctx.fillStyle = colors.CLOUD;
-  ctx.fillRect(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH,
-      sizes.CLOUDHEIGHT);
+  ctx.fillRect(positions.CLOUD_START_X, positions.CLOUD_START_Y, sizes.CLOUD_WIDTH,
+      sizes.CLOUD_HEIGHT);
 };
 
 var writeGreeteng = function (ctx) {
@@ -48,15 +48,15 @@ var writeGreeteng = function (ctx) {
   var RESULTS = 'Список результатов:';
   ctx.fillStyle = colors.TEXT;
   ctx.font = fonts.TEXT;
-  ctx.fillText(VICTORY, positions.CLOUDSTARTX + sizes.PADDING,
-      positions.CLOUDSTARTY + sizes.FONT + sizes.PADDING);
-  ctx.fillText(RESULTS, positions.CLOUDSTARTX + sizes.PADDING,
-      positions.CLOUDSTARTY + (sizes.FONT * 2) + sizes.PADDING);
+  ctx.fillText(VICTORY, positions.CLOUD_START_X + sizes.PADDING,
+      positions.CLOUD_START_Y + sizes.FONT + sizes.PADDING);
+  ctx.fillText(RESULTS, positions.CLOUD_START_X + sizes.PADDING,
+      positions.CLOUD_START_Y + (sizes.FONT * 2) + sizes.PADDING);
 };
 
 var drawResults = function (times, names, ctx) {
-  var COLUMNINTERVAL = 50;
-  var CURRENTPLAYER = 'Вы';
+  var COLUMN_INTERVAL = 50;
+  var CURREN_TPLAYER = 'Вы';
   var maxTime = getMaxTime(times);
   var positionNum = 1;
   var name;
@@ -66,14 +66,14 @@ var drawResults = function (times, names, ctx) {
   for (var i = 0; i < names.length; i++) {
     name = names[i];
     time = Math.round(times[i]);
-    if (name === CURRENTPLAYER) {
+    if (name === CURREN_TPLAYER) {
       player = true;
-      currentPosition = positions.CLOUDSTARTX + COLUMNINTERVAL;
+      currentPosition = positions.CLOUD_START_X + COLUMN_INTERVAL;
       drawColumn(currentPosition, name, time, maxTime, player, ctx);
     } else {
       player = false;
-      currentPosition = ((sizes.COLUMNWIDTH + COLUMNINTERVAL) * positionNum)
-       + COLUMNINTERVAL + positions.CLOUDSTARTX;
+      currentPosition = ((sizes.COLUMN_WIDTH + COLUMN_INTERVAL) * positionNum)
+       + COLUMN_INTERVAL + positions.CLOUD_START_X;
       drawColumn(currentPosition, name, time, maxTime, player, ctx);
       positionNum++;
     }
@@ -93,10 +93,10 @@ var getMaxTime = function (times) {
 };
 
 var drawColumn = function (currentPosition, name, time, maxTime, player, ctx) {
-  var COLUMNHEIGHT = 150;
-  var columnCurrentHeight = (COLUMNHEIGHT * time) / maxTime;
-  var columnStartY = positions.CLOUDSTARTY + sizes.CLOUDHEIGHT - sizes.PADDING
-   - sizes.FONT - COLUMNHEIGHT + (COLUMNHEIGHT - columnCurrentHeight);
+  var COLUMN_HEIGHT = 150;
+  var columnCurrentHeight = (COLUMN_HEIGHT * time) / maxTime;
+  var columnStartY = positions.CLOUD_START_Y + sizes.CLOUD_HEIGHT - sizes.PADDING
+   - sizes.FONT - COLUMN_HEIGHT + (COLUMN_HEIGHT - columnCurrentHeight);
   writePlayerName(columnStartY, currentPosition, name, time, ctx);
   drawHistogram(currentPosition, columnStartY, columnCurrentHeight, player, ctx);
 };
@@ -104,18 +104,19 @@ var drawColumn = function (currentPosition, name, time, maxTime, player, ctx) {
 var writePlayerName = function (columnStartY, currentPosition, name, time, ctx) {
   ctx.fillStyle = colors.TEXT;
   ctx.font = fonts.TEXT;
-  ctx.fillText(name, currentPosition, positions.CLOUDSTARTY + sizes.CLOUDHEIGHT
+  ctx.fillText(name, currentPosition, positions.CLOUD_START_Y + sizes.CLOUD_HEIGHT
    - sizes.PADDING);
   ctx.fillText(time, currentPosition, columnStartY - sizes.PADDING / 2);
 };
 
 var drawHistogram = function (currentPosition, columnStartY, columnCurrentHeight, player, ctx) {
-  var COLUMNPLAYER = 'rgba(255, 0, 0, 1)';
-  var COLUMNOTHER = 'rgba(0, 0, 255, opacity)';
-  ctx.fillStyle = player ? COLUMNPLAYER : COLUMNOTHER.replace('opacity', getRandom(0.3, 1));
-  ctx.fillRect(currentPosition, columnStartY, sizes.COLUMNWIDTH, columnCurrentHeight);
+  var COLUMN_PLAYER = 'rgba(255, 0, 0, 1)';
+  var COLUMN_OTHER = 'rgba(0, 0, 255, opacity)';
+  ctx.fillStyle = player ? COLUMN_PLAYER : COLUMN_OTHER.replace('opacity', getRandom(0.3, 1));
+  ctx.fillRect(currentPosition, columnStartY, sizes.COLUMN_WIDTH, columnCurrentHeight);
 };
 
 var getRandom = function (min, max) {
   return Math.random() * (max - min) + min;
 };
+
