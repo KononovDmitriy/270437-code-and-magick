@@ -6,40 +6,24 @@
     FONT: 16,
     PADDING: 20,
     COLUMNWIDTH: 40,
-    COLUMNHEIGHT: 150,
-    COLUMNINTERVAL: 50
   };
 
   var positions = {
     CLOUDSTARTX: 100,
     CLOUDSTARTY: 10,
-    CLOUDSHADOWOFFSET: 10
   };
-
-  var namesPlayers = {
-    PLAYER: 'Вы'
-  };
-
+  
   var colors = {
     CLOUD: 'white',
     CLOUDSHADOW: 'rgba(0, 0, 0, 0.7)',
     TEXT: 'black',
-    COLUMNPLAYER: 'rgba(255, 0, 0, 1)',
-    COLUMNOTHER: 'rgba(0, 0, 255, opacity)'
   };
 
   var fonts = {
     TEXT: '16px PT Mono'
   };
 
-  var messages = {
-    VICTORY: 'Ура вы победили!',
-    RESULTS: 'Список результатов:'
-  };
-
 window.renderStatistics = function (ctx, names, times) {
-  
-
   drawCloudShadow(ctx);
   drawCloud(ctx);
   writeGreeteng(ctx);
@@ -47,23 +31,32 @@ window.renderStatistics = function (ctx, names, times) {
 };
 
 var drawCloudShadow = function (ctx) {
+  var CLOUDSHADOWOFFSET = 10;
   ctx.fillStyle = colors.CLOUDSHADOW;
-  ctx.fillRect(positions.CLOUDSTARTX + positions.CLOUDSHADOWOFFSET, positions.CLOUDSTARTY + positions.CLOUDSHADOWOFFSET, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT);
+  ctx.fillRect(positions.CLOUDSTARTX + CLOUDSHADOWOFFSET, positions.CLOUDSTARTY
+   + CLOUDSHADOWOFFSET, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT);
 };
 
 var drawCloud = function (ctx) {
   ctx.fillStyle = colors.CLOUD;
-  ctx.fillRect(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH, sizes.CLOUDHEIGHT);
+  ctx.fillRect(positions.CLOUDSTARTX, positions.CLOUDSTARTY, sizes.CLOUDWIDTH, 
+    sizes.CLOUDHEIGHT);
 };
 
 var writeGreeteng = function (ctx) {
+  var VICTORY = 'Ура вы победили!';
+  var RESULTS = 'Список результатов:';
   ctx.fillStyle = colors.TEXT;
   ctx.font = fonts.TEXT;
-  ctx.fillText(messages.VICTORY, positions.CLOUDSTARTX + sizes.PADDING, positions.CLOUDSTARTY + sizes.FONT + sizes.PADDING);
-  ctx.fillText(messages.RESULTS, positions.CLOUDSTARTX + sizes.PADDING, positions.CLOUDSTARTY + (sizes.FONT * 2) + sizes.PADDING);
+  ctx.fillText(VICTORY, positions.CLOUDSTARTX + sizes.PADDING, 
+    positions.CLOUDSTARTY + sizes.FONT + sizes.PADDING);
+  ctx.fillText(RESULTS, positions.CLOUDSTARTX + sizes.PADDING, 
+    positions.CLOUDSTARTY + (sizes.FONT * 2) + sizes.PADDING);
 };
 
 var drawResults = function (times, names, ctx) {
+  var COLUMNINTERVAL = 50;
+  var CURRENTPLAYER = 'Вы';
   var maxTime = getMaxTime(times);
   var positionNum = 1;
   var name;
@@ -73,13 +66,14 @@ var drawResults = function (times, names, ctx) {
   for (var i = 0; i < names.length; i++) {
     name = names[i];
     time = Math.round(times[i]);
-    if (name === namesPlayers.PLAYER) {
+    if (name === CURRENTPLAYER) {
       player = true;
-      currentPosition = positions.CLOUDSTARTX + sizes.COLUMNINTERVAL;
+      currentPosition = positions.CLOUDSTARTX + COLUMNINTERVAL;
       drawColumn(currentPosition, name, time, maxTime, player, ctx);
     } else {
       player = false;
-      currentPosition = ((sizes.COLUMNWIDTH + sizes.COLUMNINTERVAL) * positionNum) + sizes.COLUMNINTERVAL + positions.CLOUDSTARTX;
+      currentPosition = ((sizes.COLUMNWIDTH + COLUMNINTERVAL) * positionNum)
+       + COLUMNINTERVAL + positions.CLOUDSTARTX;
       drawColumn(currentPosition, name, time, maxTime, player, ctx);
       positionNum++;
     }
@@ -99,8 +93,10 @@ var getMaxTime = function (times) {
 };
 
 var drawColumn = function (currentPosition, name, time, maxTime, player, ctx) {
-  var columnCurrentHeight = (sizes.COLUMNHEIGHT * time) / maxTime;
-  var columnStartY = positions.CLOUDSTARTY + sizes.CLOUDHEIGHT - sizes.PADDING - sizes.FONT - sizes.COLUMNHEIGHT + (sizes.COLUMNHEIGHT - columnCurrentHeight);
+  var COLUMNHEIGHT = 150;
+  var columnCurrentHeight = (COLUMNHEIGHT * time) / maxTime;
+  var columnStartY = positions.CLOUDSTARTY + sizes.CLOUDHEIGHT - sizes.PADDING
+   - sizes.FONT - COLUMNHEIGHT + (COLUMNHEIGHT - columnCurrentHeight);
   writePlayerName(columnStartY, currentPosition, name, time, ctx);
   drawHistogram(currentPosition, columnStartY, columnCurrentHeight, player, ctx);
 };
@@ -108,12 +104,15 @@ var drawColumn = function (currentPosition, name, time, maxTime, player, ctx) {
 var writePlayerName = function (columnStartY, currentPosition, name, time, ctx) {
   ctx.fillStyle = colors.TEXT;
   ctx.font = fonts.TEXT;
-  ctx.fillText(name, currentPosition, positions.CLOUDSTARTY + sizes.CLOUDHEIGHT - sizes.PADDING);
+  ctx.fillText(name, currentPosition, positions.CLOUDSTARTY + sizes.CLOUDHEIGHT
+   - sizes.PADDING);
   ctx.fillText(time, currentPosition, columnStartY - sizes.PADDING / 2);
 };
 
 var drawHistogram = function (currentPosition, columnStartY, columnCurrentHeight, player, ctx) {
-  ctx.fillStyle = player ? colors.COLUMNPLAYER : colors.COLUMNOTHER.replace('opacity', getRandom(0.3, 1));
+  var COLUMNPLAYER = 'rgba(255, 0, 0, 1)';
+  var COLUMNOTHER = 'rgba(0, 0, 255, opacity)';
+  ctx.fillStyle = player ? COLUMNPLAYER : COLUMNOTHER.replace('opacity', getRandom(0.3, 1));
   ctx.fillRect(currentPosition, columnStartY, sizes.COLUMNWIDTH, columnCurrentHeight);
 };
 
